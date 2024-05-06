@@ -10,3 +10,6 @@ config.sh
 *.key.pub
 serverless-output.yml
 package-lock.json
+
+cdk.out
+cdk.context.json
