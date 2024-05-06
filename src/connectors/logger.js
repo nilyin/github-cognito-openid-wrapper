@@ -34,14 +34,10 @@ if (SPLUNK_URL) {
     })
   );
 } else {
-  // STDOUT logging for dev/regular servers
+  // JSON logging for Lambda deployment
   logger.add(
     new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.splat(),
-        winston.format.colorize({ all: true }),
-        winston.format.simple()
-      ),
+      format: winston.format.json(),
     })
   );
 }
