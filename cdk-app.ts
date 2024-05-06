@@ -39,7 +39,7 @@ export class GitHubCognitoOpenIdWrapper extends cdk.Stack {
     };
     const handlerCode = lambda.Code.fromAsset('./dist-lambda');
     const lambdaCommonProps = {
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_20_X,
       code: handlerCode,
       environment,
     };
@@ -93,7 +93,6 @@ export class GitHubCognitoOpenIdWrapper extends cdk.Stack {
 
     new cdk.CfnOutput(this, 'GitHubShimIssuer', {
       description: 'GitHub OpenID Shim Issuer',
-      // value: `https://${api.restApiId}.execute-api.${this.region}.amazonaws.com/${api.deploymentStage.stageName}`,
       value: api.url,
     });
   }
@@ -104,6 +103,9 @@ new GitHubCognitoOpenIdWrapper(app, 'GithubCognitoOpenidWrapperStack', {
   githubClientId: app.node.getContext('githubClientId'),
   githubClientSecretArn: app.node.getContext('githubClientSecretArn'),
   cognitoRedirectUri: app.node.getContext('cognitoRedirectUri'),
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+  env: {
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION,
+  },
 });
 app.synth();
