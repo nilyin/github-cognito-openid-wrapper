@@ -2,6 +2,7 @@ const qs = require('querystring');
 const responder = require('./util/responder');
 const auth = require('./util/auth');
 const controllers = require('../controllers');
+const logger = require('../logger');
 
 const parseBody = (event) => {
   const contentType = event.headers['Content-Type'];
@@ -17,6 +18,8 @@ const parseBody = (event) => {
 };
 
 module.exports.handler = (event, context, callback) => {
+  logger.defaultMeta = { requestId: context.awsRequestId };
+
   const body = parseBody(event);
   const query = event.queryStringParameters || {};
 
