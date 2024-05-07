@@ -4,7 +4,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 
-interface GitHubCognitoOpenIdWrapperProps extends cdk.StackProps {
+interface GitHubCognitoOpenidWrapperProps {
   githubClientId: string;
   githubClientSecretArn: string;
   /**
@@ -15,13 +15,15 @@ interface GitHubCognitoOpenIdWrapperProps extends cdk.StackProps {
   githubLoginUrl?: string;
 }
 
-export class GitHubCognitoOpenIdWrapper extends cdk.Stack {
+export class GitHubCognitoOpenidWrapper extends Construct {
+  readonly endpoint: string;
+
   constructor(
     scope: Construct,
     id: string,
-    props: GitHubCognitoOpenIdWrapperProps
+    props: GitHubCognitoOpenidWrapperProps
   ) {
-    super(scope, id, props);
+    super(scope, id);
 
     const githubAppClientSecret = secretsmanager.Secret.fromSecretAttributes(
       this,
@@ -65,8 +67,8 @@ export class GitHubCognitoOpenIdWrapper extends cdk.Stack {
       handler: 'jwks.handler',
     });
 
-    const api = new apigateway.RestApi(this, 'GithubOAuthApi', {
-      restApiName: 'Github Cognito OpenID Wrapper',
+    const api = new apigateway.RestApi(this, 'OpenidApi', {
+      restApiName: 'GitHub Cognito OpenID Wrapper API',
     });
 
     const wellKnownResource = api.root.addResource('.well-known');
@@ -90,22 +92,30 @@ export class GitHubCognitoOpenIdWrapper extends cdk.Stack {
     const userInfoIntegration = new apigateway.LambdaIntegration(userInfo);
     userInfoResource.addMethod('GET', userInfoIntegration);
     userInfoResource.addMethod('POST', userInfoIntegration);
-
-    new cdk.CfnOutput(this, 'GitHubShimIssuer', {
-      description: 'GitHub OpenID Shim Issuer',
-      value: api.url,
-    });
+    this.endpoint = api.url;
   }
 }
 
 const app = new cdk.App();
-new GitHubCognitoOpenIdWrapper(app, 'GithubCognitoOpenidWrapperStack', {
-  githubClientId: app.node.getContext('githubClientId'),
-  githubClientSecretArn: app.node.getContext('githubClientSecretArn'),
-  cognitoRedirectUri: app.node.getContext('cognitoRedirectUri'),
+const stack = new cdk.Stack(app, 'GithubCognitoOpenidWrapperStack', {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION,
   },
 });
+const githubOpenidWrapper = new GitHubCognitoOpenidWrapper(
+  stack,
+  'GithubCognitoOpenidWrapper',
+  {
+    githubClientId: app.node.getContext('githubClientId'),
+    githubClientSecretArn: app.node.getContext('githubClientSecretArn'),
+    cognitoRedirectUri: app.node.getContext('cognitoRedirectUri'),
+  }
+);
+
+new cdk.CfnOutput(stack, 'GithubOpenidEndpoint', {
+  description: 'GitHub OpenID wrapper endpoint',
+  value: githubOpenidWrapper.endpoint,
+});
+
 app.synth();
