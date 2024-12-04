@@ -1,0 +1,19 @@
+add path to SAM CLI in windows into Gitbash terminal
+
+export PATH=$PATH:"/c/Program Files/Amazon/AWSSAMCLI/bin"
+
+and add to scripts:
+export PATH="/c/Program Files/Amazon/AWSSAMCLI/bin:$PATH"
+
+or use in scripts full path:
+"/c/Program Files/Amazon/AWSSAMCLI/bin/sam.cmd" "$@"
+
+another ways is:
+
+Create a function instead of an alias in .bashrc (functions are exported if you use export -f):
+
+sam() {
+    "/c/Program Files/Amazon/AWSSAMCLI/bin/sam.cmd" "$@"
+}
+export -f sam
+

@@ -3,6 +3,11 @@
 set -e
 set -u
 
+# Define error function
+error() {
+    echo "ERROR: $1" >&2
+}
+
 # Check to see that we have a required binary on the path
 function require_binary {
   if [ -z "${1:-}" ]; then

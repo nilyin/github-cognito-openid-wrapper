@@ -1,4 +1,10 @@
 #!/bin/bash -eu
+
+# for windows uncomment path below:
+# export PATH='"C:\Program Files\Amazon\AWSSAMCLI\bin":$PATH'
+# alias sam="C:\\Program Files\\Amazon\\AWSSAMCLI\bin\\sam.cmd"
+
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)"  # Figure out where the script is running
 . "$SCRIPT_DIR"/lib-robust-bash.sh # load the robust bash library
 PROJECT_ROOT="$SCRIPT_DIR"/.. # Figure out where the project directory is
