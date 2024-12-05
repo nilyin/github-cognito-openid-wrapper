@@ -17,3 +17,11 @@ sam() {
 }
 export -f sam
 
+
+# clone branch from another remote repository
+git remote add temp-remote https://github.com/pcholakov/github-cognito-openid-wrapper.git
+git fetch temp-remote cdk
+// After fetching, we can create a new branch in  a local repository that tracks the remote branch:
+git checkout -b cdk temp-remote/cdk
+git remote remove temp-remote
+
