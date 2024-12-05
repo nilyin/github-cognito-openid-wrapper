@@ -22,7 +22,7 @@
     "format:fix": "npm run format:base -- --write",
     "format:check": "npm run format:base -- --check",
     "release": "commit-and-tag-version",
-    "deploy": "bash ./scripts/deploy.sh",
+    "deploy": "bash ./scripts/deploy-win.sh",
     "coverage": "jest --runInBand --coverage",
     "snyk-protect": "snyk-protect",
     "prepare": "npm run snyk-protect"
